@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "image": "https://moffa.s3.amazonaws.com/bottom_eitpyz.jpg",
+    "title": "Best Seller",
+    "subtitle": "Choose Your Products Here",
+    "link": "/banner-product/best",
+    "textAlign": "right"
+  },
+  {
+    "id": 2,
+    "image": "https://moffa.s3.amazonaws.com/bottombanner_weopgt.jpg",
+    "title": "New Products",
+    "subtitle": "Choose Your Products Here",
+    "link": "/banner-product/new",
+    "textAlign": "left"
+  }
+]
