@@ -34,11 +34,9 @@ const ProductGridSingleSix = ({
   if (user?.user == true || user == null) {
     if (offer) {
       var discountedPrice = getDiscountPrice(product.price, offer).toFixed(0);
-    } else if (product.discount) {
-      var discountedPrice = getDiscountPrice(
-        product.price,
-        product.discount
-      ).toFixed(0);
+    } else if (product.discount > 0) {
+      console.log(product.discount > 0);
+      var discountedPrice = getDiscountPrice(product.price, product.discount);
     } else {
       var discountedPrice = null;
     }

@@ -139,11 +139,11 @@ router.route("/Yesterday-orders").post(verifyToken, yesterdayOrders);
 //view wallet information
 router.route("/view-all-wallet-info").get(verifyToken, ViewAllInformation);
 //monthly ways report downloading api
-router  
+router
   .route("/view-all-monthlyways-report")
   .post(verifyToken, MonthlyWaysReportApi);
 //order editing
-router.route("/edit-order-address").post(verifyToken, EditOrderAddress);    
+router.route("/edit-order-address").post(verifyToken, EditOrderAddress);
 //image uploading
 router.route("/image-uploading").post( ImageUploading);
 

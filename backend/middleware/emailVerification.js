@@ -27,6 +27,7 @@ module.exports.sendMailOTP = (mail, otp) => {
     if (error) {
       console.log(error);
     } else {
+      console.log("Email sent: " + info.response);
     }
   });
 };
@@ -80,9 +81,7 @@ module.exports.sendDispatchMail = (
     to: email,
     subject: "Thepaaki Online ",
     text:
-      "Great News! Your Order " +
-      order_id +
-      " is on the way. Track your Shipment to see the delivery status " +
+      "Great News! Your Order " +order_id+" is on the way. Track your Shipment to see the delivery status " +
       deliveryProvider +
       " " +
       "Your tracking no is " +

@@ -37,9 +37,8 @@ const ProductGridSingleTwo = ({
   var wholesaler = false;
   if (user?.user == true || user == null) {
     if (offer) {
-      console.log(product.price);
       var discountedPrice = getDiscountPrice(product.price, offer).toFixed(0);
-    } else if (product.discount) {
+    } else if (product.discount>0) {
       var discountedPrice = getDiscountPrice(
         product.price,
         product.discount

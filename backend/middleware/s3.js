@@ -1,7 +1,7 @@
 const multer = require("multer");
 const AWS = require("aws-sdk");
-const ACCESS_KEY = "AKIA43UOWL5CVPQY5B4V";
-const SECRET_ACCESS_KEY = "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";
+const ACCESS_KEY = process.env.ACCESS_KEY;
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY;
 
 const s3 = new AWS.S3({
   accessKeyId: ACCESS_KEY,
@@ -11,7 +11,7 @@ const s3 = new AWS.S3({
 module.exports.uploadS3 = (fileData) => {
   return new Promise((resovle, reject) => {
     const params = { 
-      Bucket: "moffaa",
+      Bucket:process.env.BUCKET,
       Key: `${Date.now().toString()}.jpg`,
       Body: fileData,
     };
@@ -20,7 +20,7 @@ module.exports.uploadS3 = (fileData) => {
         console.log(err);
         reject(err);
       } else {
-        console.log(data);
+      
         return resovle(data);
       }
     });

@@ -892,12 +892,12 @@ const ImageUploading = asyncHandler(async (req, res) => {
     for (let i = 0; i < req.files.file.length; i++) {
       uploadS3(req.files.file[i].data)
         .then((result) => {
-          const obj = { 
+          const obj = {
             url: result.Location,
-            key: result.Key, 
+            key: result.Key,
           };
           images.push(obj);
-          if (images.length == req.files.file.length) { 
+          if (images.length == req.files.file.length) {
             res.status(200).json(images);
           }
         })

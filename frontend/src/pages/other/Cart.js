@@ -117,7 +117,7 @@ const Cart = ({
                                   cartItem.price,
                                   offer
                                 ).toFixed(0);
-                              } else if (cartItem.discount) {
+                              } else if (cartItem.discount>0) {
                                 var discountedPrice = getDiscountPrice(
                                   cartItem.price,
                                   cartItem.discount

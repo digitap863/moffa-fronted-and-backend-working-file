@@ -1907,9 +1907,8 @@ const verificationPayment = asyncHandler(async (req, res) => {
     const isRequestValid = Razorpay.validateWebhookSignature(
       JSON.stringify(req.body),
       signature,
-      process.env.WEBHOOK_SECRET
+      "asdfghjkl"
     );
-    console.log(isRequestValid,"k");
     if (!isRequestValid) {
       res.status(400).json("Somthing Went wrong");
     }
@@ -2086,11 +2085,8 @@ const verificationPayment = asyncHandler(async (req, res) => {
           sendEmail = Take?.email;
           name = Take.name;
         }
-        let OrdersId;
-        let OrderId;
-        let InvoceNO;
-        let success;
-        OrdersId = await db
+
+        let OrdersId = await db
           .get()
           .collection(collection.ORDER_COLLECTION)
           .aggregate([
@@ -2105,6 +2101,8 @@ const verificationPayment = asyncHandler(async (req, res) => {
             { $limit: 1 },
           ])
           .toArray();
+        let OrderId;
+        let InvoceNO;
         if (OrdersId[0]?.Id) {
           OrderId = OrdersId[0].Id + 1;
           const PR = OrdersId[0].InvoceNO.slice(5);
@@ -2114,64 +2112,58 @@ const verificationPayment = asyncHandler(async (req, res) => {
           OrderId = 130001;
           InvoceNO = "MFA" + 001;
         }
-        (async function loop() {
-          const checkOrderID = await db
+        const checkOrderID = await db
+          .get()
+          .collection(collection.ORDER_COLLECTION)
+          .findOne({ Id: OrderId });
+        if (checkOrderID) {
+          let OrdersId = await db
             .get()
             .collection(collection.ORDER_COLLECTION)
-            .findOne({ Id: OrderId });
-          if (!checkOrderID) {
-            order["Id"] = OrderId;
-            order["InvoceNO"] = InvoceNO;
-            order["smsphone"] = smsphone;
-            order["userEmail"] = sendEmail;
-            order["orderName"] = name;
-            success = await db
-              .get()
-              .collection(collection.ORDER_COLLECTION)
-              .insertOne(order);
-            if (success) {
-              if (smsphone) {
-                sms.sendOrderPlacedSMS(OrderId, smsphone);
-              }
-              if (sendEmail) {
-                email.sendOrderPlacedMail(sendEmail);
-              }
-              req.session.orderProducts = null;
-              req.session.Applywallet = null;
-            }
-            if (success) {
-              res.status(200).json("Success");
-            } else {
-              res.status(400).json("Success");
-            }
-          } else {
-            OrdersId = await db
-              .get()
-              .collection(collection.ORDER_COLLECTION)
-              .aggregate([
-                {
-                  $project: {
-                    _id: 1,
-                    Id: 1,
-                    InvoceNO: 1,
-                  },
+            .aggregate([
+              {
+                $project: {
+                  _id: 1,
+                  Id: 1,
+                  InvoceNO: 1,
                 },
-                { $sort: { _id: -1 } },
-                { $limit: 1 },
-              ])
-              .toArray();
-            if (OrdersId[0]?.Id) {
-              OrderId = OrdersId[0].Id + 1;
-              const PR = OrdersId[0].InvoceNO.slice(5);
-              const inc = parseInt(PR) + 1;
-              InvoceNO = "MFA00" + inc;
-            } else {
-              OrderId = 130001;
-              InvoceNO = "MFA" + 001;
-            }
-            loop();
+              },
+              { $sort: { _id: -1 } },
+              { $limit: 1 },
+            ])
+            .toArray();
+          if (OrdersId[0]?.Id) {
+            OrderId = OrdersId[0].Id + 1;
+            const PR = OrdersId[0].InvoceNO.slice(5);
+            const inc = parseInt(PR) + 1;
+            InvoceNO = "MFA00" + inc;
+          } else {
+            OrderId = 130001;
+            InvoceNO = "MFA" + 001;
           }
-        })();
+        }
+        order["Id"] = OrderId;
+        order["InvoceNO"] = InvoceNO;
+        order["smsphone"] = smsphone;
+        order["userEmail"] = sendEmail;
+        order["orderName"] = name;
+        const success = await db
+          .get()
+          .collection(collection.ORDER_COLLECTION)
+          .insertOne(order);
+        if (success) {
+          if (smsphone) {
+            sms.sendOrderPlacedSMS(OrderId, smsphone);
+          }
+          if (sendEmail) {
+            email.sendOrderPlacedMail(sendEmail);
+          }
+          req.session.orderProducts = null;
+          req.session.Applywallet = null;
+          res.status(200).json("Success");
+        } else {
+          res.status(400).json("Somthing Went Wrong");
+        }
       }
     }
   } catch (error) {
@@ -2300,25 +2292,15 @@ const rezorpayOrder = asyncHandler(async (req, res) => {
     sendEmail = Take?.email;
     name = Take.name;
   }
-  let OrdersId;
-  let OrderId;
-  let InvoceNO;
-  let success;
-  OrdersId = await db
+  let OrdersId = await db
     .get()
     .collection(collection.ORDER_COLLECTION)
-    .aggregate([
-      {
-        $project: {
-          _id: 1,
-          Id: 1,
-          InvoceNO: 1,
-        },
-      },
-      { $sort: { _id: -1 } },
-      { $limit: 1 },
-    ])
+    .find()
+    .sort({ _id: -1 })
+    .limit(1)
     .toArray();
+  let OrderId;
+  let InvoceNO;
   if (OrdersId[0]?.Id) {
     OrderId = OrdersId[0].Id + 1;
     const PR = OrdersId[0].InvoceNO.slice(5);
@@ -2328,64 +2310,47 @@ const rezorpayOrder = asyncHandler(async (req, res) => {
     OrderId = 130001;
     InvoceNO = "MFA" + 001;
   }
-  (async function loop() {
-    const checkOrderID = await db
+  const checkOrderID = await db
+    .get()
+    .collection(collection.ORDER_COLLECTION)
+    .findOne({ Id: OrderId });
+  if (checkOrderID) {
+    OrdersId = await db
       .get()
       .collection(collection.ORDER_COLLECTION)
-      .findOne({ Id: OrderId });
-    if (!checkOrderID) {
-      order["Id"] = OrderId;
-      order["InvoceNO"] = InvoceNO;
-      order["smsphone"] = smsphone;
-      order["userEmail"] = sendEmail;
-      order["orderName"] = name;
-      success = await db
-        .get()
-        .collection(collection.ORDER_COLLECTION)
-        .insertOne(order);
-      if (success) {
-        if (smsphone) {
-          sms.sendOrderPlacedSMS(OrderId, smsphone);
-        }
-        if (sendEmail) {
-          email.sendOrderPlacedMail(sendEmail);
-        }
-        req.session.orderProducts = null;
-        req.session.Applywallet = null;
-      }
-      if (success) {
-        res.status(200).json("Success");
-      } else {
-        res.status(400).json("Success");
-      }
-    } else {
-      OrdersId = await db
-        .get()
-        .collection(collection.ORDER_COLLECTION)
-        .aggregate([
-          {
-            $project: {
-              _id: 1,
-              Id: 1,
-              InvoceNO: 1,
-            },
-          },
-          { $sort: { _id: -1 } },
-          { $limit: 1 },
-        ])
-        .toArray();
-      if (OrdersId[0]?.Id) {
-        OrderId = OrdersId[0].Id + 1;
-        const PR = OrdersId[0].InvoceNO.slice(5);
-        const inc = parseInt(PR) + 1;
-        InvoceNO = "MFA00" + inc;
-      } else {
-        OrderId = 130001;
-        InvoceNO = "MFA" + 001;
-      }
-      loop();
+      .find()
+      .sort({ Id: -1 })
+      .limit(1)
+      .toArray();
+    if (OrdersId[0]?.Id) {
+      OrderId = OrdersId[0].Id + 1;
+      const PR = OrdersId[0].InvoceNO.slice(5);
+      const inc = parseInt(PR) + 1;
+      InvoceNO = "MFA00" + inc;
     }
-  })();
+  }
+  order["Id"] = OrderId;
+  order["InvoceNO"] = InvoceNO;
+  order["smsphone"] = smsphone;
+  order["userEmail"] = sendEmail;
+  order["orderName"] = name;
+  const success = await db
+    .get()
+    .collection(collection.ORDER_COLLECTION)
+    .insertOne(order);
+  if (success) {
+    if (smsphone) {
+      sms.sendOrderPlacedSMS(OrderId, smsphone);
+    }
+    if (sendEmail) {
+      email.sendOrderPlacedMail(sendEmail);
+    }
+    req.session.orderProducts = null;
+    req.session.Applywallet = null;
+    res.status(200).json("Success");
+  } else {
+    res.status(400).json("Somthing Went Wrong");
+  }
 });
 const deleteuserCart = asyncHandler(async (req, res) => {
   const userid = req.body.userID;

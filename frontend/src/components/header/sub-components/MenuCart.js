@@ -107,7 +107,7 @@ const MenuCart = ({ cartData, deleteFromCart, user, addToCart }) => {
                     single.price,
                     offer
                   ).toFixed(0);
-                } else if (single.discount) {
+                } else if (single.discount>0) {
                   discountedPrice = getDiscountPrice(
                     single.price,
                     single.discount
