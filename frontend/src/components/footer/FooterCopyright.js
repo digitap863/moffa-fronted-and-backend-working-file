@@ -16,11 +16,11 @@ const FooterCopyright = ({ footerLogo, spaceBottomClass, colorClass }) => {
         </Link>
       </div>
       <p>
-        © 2022{" "}
+        © CopyRight 2022 <span ><a href="https://tapclone.co.in/" target="_blank" style={{color:"orange"}}>Tapclone</a></span>
         <a href="/" rel="noopener noreferrer" target="_blank">
-          Moffa Clothing
+         
         </a>
-        .<br /> All Rights Reserved
+        <br /> All Rights Reserved
       </p>
     </div>
   );

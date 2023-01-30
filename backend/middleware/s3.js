@@ -10,8 +10,8 @@ const s3 = new AWS.S3({
 
 module.exports.uploadS3 = (fileData) => {
   return new Promise((resovle, reject) => {
-    const params = { 
-      Bucket:process.env.BUCKET,
+    const params = {
+      Bucket: process.env.BUCKET,
       Key: `${Date.now().toString()}.jpg`,
       Body: fileData,
     };
@@ -20,7 +20,6 @@ module.exports.uploadS3 = (fileData) => {
         console.log(err);
         reject(err);
       } else {
-      
         return resovle(data);
       }
     });
