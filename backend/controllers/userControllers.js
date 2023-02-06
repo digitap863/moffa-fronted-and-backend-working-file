@@ -13,6 +13,7 @@ const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
 const https = require("https");
 const Razorpay = require("razorpay");
+const { ObjectID } = require("bson");
 
 const razorpay = new Razorpay({
   key_id: process.env.SECRET_KEY,
@@ -1790,12 +1791,7 @@ const createOrderObjct = asyncHandler(async (req, res) => {
   });
 
   //increasing sales count
-  OderProducts.map(async (items) => {
-    await db
-      .get()
-      .collection(collection.PRODUCT_COLLECTION)
-      .updateOne({ id: items.ProductID }, { $inc: { saleCount: 1 } });
-  });
+
   const date = req.body.Date;
 
   //create order object
@@ -2023,6 +2019,13 @@ const verificationPayment = asyncHandler(async (req, res) => {
             .get()
             .collection(collection.PRODUCT_COLLECTION)
             .findOne({ id: products.ProductID });
+          const saleCount = await db
+            .get()
+            .collection(collection.PRODUCT_COLLECTION)
+            .updateOne(
+              { id: products.ProductID },
+              { $inc: { saleCount: parseInt(products.quantity) } }
+            );
           product.variation.map(async (obj, indexes) => {
             if (obj.color == products.color) {
               obj.size.map(async (sizesObj, index) => {
@@ -2065,6 +2068,7 @@ const verificationPayment = asyncHandler(async (req, res) => {
             }
           });
         });
+
         let smsphone;
         let sendEmail;
         let name;
@@ -2085,7 +2089,6 @@ const verificationPayment = asyncHandler(async (req, res) => {
           sendEmail = Take?.email;
           name = Take.name;
         }
-
         let OrdersId = await db
           .get()
           .collection(collection.ORDER_COLLECTION)
@@ -2112,46 +2115,84 @@ const verificationPayment = asyncHandler(async (req, res) => {
           OrderId = 130001;
           InvoceNO = "MFA" + 001;
         }
-        const checkOrderID = await db
+        // const checkOrderID = await db
+        //   .get()
+        //   .collection(collection.ORDER_COLLECTION)
+        //   .findOne({ Id: OrderId });
+        // if (checkOrderID) {
+        //   let OrdersId = await db
+        //     .get()
+        //     .collection(collection.ORDER_COLLECTION)
+        //     .aggregate([
+        //       {
+        //         $project: {
+        //           _id: 1,
+        //           Id: 1,
+        //           InvoceNO: 1,
+        //         },
+        //       },
+        //       { $sort: { _id: -1 } },
+        //       { $limit: 1 },
+        //     ])
+        //     .toArray();
+        //   if (OrdersId[0]?.Id) {
+        //     OrderId = OrdersId[0].Id + 1;
+        //     const PR = OrdersId[0].InvoceNO.slice(5);
+        //     const inc = parseInt(PR) + 1;
+        //     InvoceNO = "MFA00" + inc;
+        //   } else {
+        //     OrderId = 130001;
+        //     InvoceNO = "MFA" + 001;
+        //   }
+        // }
+
+        let LastOrderId;
+        LastOrderId = await db
           .get()
-          .collection(collection.ORDER_COLLECTION)
-          .findOne({ Id: OrderId });
-        if (checkOrderID) {
-          let OrdersId = await db
+          .collection(collection.ORDER_COUNTER_COLLECTION)
+          .findOne({ name: "counter" });
+        if (!LastOrderId) {
+          const obj = {
+            ID: 1343,
+            InvoceNO: "MFA001",
+            name: "counter",
+          };
+          await db
             .get()
-            .collection(collection.ORDER_COLLECTION)
-            .aggregate([
+            .collection(collection.ORDER_COUNTER_COLLECTION)
+            .insertOne(obj);
+          LastOrderId = obj;
+        }
+        if (LastOrderId?.ID) {
+          OrderId = LastOrderId.ID;
+          const PR = LastOrderId.InvoceNO.slice(5);
+          const inc = parseInt(PR) + 1;
+          InvoceNO = "MFA00" + inc;
+          await db
+            .get()
+            .collection(collection.ORDER_COUNTER_COLLECTION)
+            .findOneAndUpdate(
+              { name: "counter" },
               {
-                $project: {
-                  _id: 1,
-                  Id: 1,
-                  InvoceNO: 1,
+                $set: {
+                  ID: OrderId + 1,
+                  InvoceNO: InvoceNO,
                 },
-              },
-              { $sort: { _id: -1 } },
-              { $limit: 1 },
-            ])
-            .toArray();
-          if (OrdersId[0]?.Id) {
-            OrderId = OrdersId[0].Id + 1;
-            const PR = OrdersId[0].InvoceNO.slice(5);
-            const inc = parseInt(PR) + 1;
-            InvoceNO = "MFA00" + inc;
-          } else {
-            OrderId = 130001;
-            InvoceNO = "MFA" + 001;
-          }
+              }
+            );
         }
         order["Id"] = OrderId;
         order["InvoceNO"] = InvoceNO;
         order["smsphone"] = smsphone;
         order["userEmail"] = sendEmail;
         order["orderName"] = name;
+
         const success = await db
           .get()
           .collection(collection.ORDER_COLLECTION)
           .insertOne(order);
         if (success) {
+          console.log("succeess");
           if (smsphone) {
             sms.sendOrderPlacedSMS(OrderId, smsphone);
           }
@@ -2231,6 +2272,14 @@ const rezorpayOrder = asyncHandler(async (req, res) => {
       .get()
       .collection(collection.PRODUCT_COLLECTION)
       .findOne({ id: products.ProductID });
+    const updatedsalses = await db
+      .get()
+      .collection(collection.PRODUCT_COLLECTION)
+      .updateOne(
+        { id: products.ProductID },
+        { $inc: { saleCount: parseInt(products.quantity) } }
+      );
+
     product.variation.map(async (obj, indexes) => {
       if (obj.color == products.color) {
         obj.size.map(async (sizesObj, index) => {
@@ -2292,12 +2341,21 @@ const rezorpayOrder = asyncHandler(async (req, res) => {
     sendEmail = Take?.email;
     name = Take.name;
   }
+
   let OrdersId = await db
     .get()
     .collection(collection.ORDER_COLLECTION)
-    .find()
-    .sort({ _id: -1 })
-    .limit(1)
+    .aggregate([
+      {
+        $project: {
+          _id: 1,
+          Id: 1,
+          InvoceNO: 1,
+        },
+      },
+      { $sort: { _id: -1 } },
+      { $limit: 1 },
+    ])
     .toArray();
   let OrderId;
   let InvoceNO;
@@ -2310,25 +2368,60 @@ const rezorpayOrder = asyncHandler(async (req, res) => {
     OrderId = 130001;
     InvoceNO = "MFA" + 001;
   }
-  const checkOrderID = await db
+  let LastOrderId;
+  LastOrderId = await db
     .get()
-    .collection(collection.ORDER_COLLECTION)
-    .findOne({ Id: OrderId });
-  if (checkOrderID) {
-    OrdersId = await db
+    .collection(collection.ORDER_COUNTER_COLLECTION)
+    .findOne({ name: "counter" });
+  if (!LastOrderId) {
+    const obj = {
+      ID: 1343,
+      InvoceNO: "MFA001",
+      name: "counter",
+    };
+    await db
       .get()
-      .collection(collection.ORDER_COLLECTION)
-      .find()
-      .sort({ Id: -1 })
-      .limit(1)
-      .toArray();
-    if (OrdersId[0]?.Id) {
-      OrderId = OrdersId[0].Id + 1;
-      const PR = OrdersId[0].InvoceNO.slice(5);
-      const inc = parseInt(PR) + 1;
-      InvoceNO = "MFA00" + inc;
-    }
+      .collection(collection.ORDER_COUNTER_COLLECTION)
+      .insertOne(obj);
+    LastOrderId = obj;
   }
+  if (LastOrderId?.ID) {
+    OrderId = LastOrderId.ID;
+    const PR = LastOrderId.InvoceNO.slice(5);
+    const inc = parseInt(PR) + 1;
+    InvoceNO = "MFA00" + inc;
+    await db
+      .get()
+      .collection(collection.ORDER_COUNTER_COLLECTION)
+      .findOneAndUpdate(
+        { name: "counter" },
+        {
+          $set: {
+            ID: OrderId + 1,
+            InvoceNO: InvoceNO,
+          },
+        }
+      );
+  }
+  // const checkOrderID = await db
+  //   .get()
+  //   .collection(collection.ORDER_COLLECTION)
+  //   .findOne({ Id: OrderId });
+  // if (checkOrderID) {
+  //   OrdersId = await db
+  //     .get()
+  //     .collection(collection.ORDER_COLLECTION)
+  //     .find()
+  //     .sort({ Id: -1 })
+  //     .limit(1)
+  //     .toArray();
+  //   if (OrdersId[0]?.Id) {
+  //     OrderId = OrdersId[0].Id + 1;
+  //     const PR = OrdersId[0].InvoceNO.slice(5);
+  //     const inc = parseInt(PR) + 1;
+  //     InvoceNO = "MFA00" + inc;
+  //   }
+  // }
   order["Id"] = OrderId;
   order["InvoceNO"] = InvoceNO;
   order["smsphone"] = smsphone;

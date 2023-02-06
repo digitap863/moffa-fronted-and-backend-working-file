@@ -16,6 +16,7 @@ import Accordion from "react-bootstrap/Accordion";
 import Checkbox from "@mui/material/Checkbox";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
+import Loading from "react-loading-components";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
@@ -47,6 +48,7 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
   const [courier, setCourierservice] = useState("Indian Post");
   const [admin, setAdmin] = useState();
   const [buttondisable, setButtondisable] = useState(false);
+  const [loadingCheack, setLoadingCheack] = useState(false);
   const { pathname } = location;
   const { addToast } = useToasts();
   var toatalQuantity = 0;
@@ -276,6 +278,7 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
       dangerMode: true,
     }).then(async (willDelete) => {
       if (willDelete) {
+        setLoadingCheack(true);
         const razorpaydetails = {
           name: data.Name,
           email: data.Email,
@@ -522,6 +525,7 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
                       },
                       config
                     );
+
                     if (OrderItmes["data"]) {
                       const items = OrderItmes["data"];
                       try {
@@ -536,7 +540,7 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
                           items,
                           config
                         );
-
+                        setLoadingCheack(false);
                         const { ammount, id: order_id, currency } = data;
                         const options = {
                           key: process.env.SECRET_KEY, // Enter the Key ID generated from the Dashboard
@@ -665,6 +669,7 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
                           config
                         );
                         if (OrderItmes["data"]) {
+                          setLoadingCheack(false);
                           const items = OrderItmes["data"];
                           try {
                             const result = await axios.post(
@@ -792,6 +797,7 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
                               items,
                               config
                             );
+                            setLoadingCheack(false);
                             const { ammount, id: order_id, currency } = data;
                             const options = {
                               key: process.env.SECRET_KEY, // Enter the Key ID generated from the Dashboard
@@ -1895,11 +1901,29 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
                       <div className="place-order mt-25">
                         {buttondisable ? (
                           <button type="submit" className="btn-hover" disabled>
-                            Place Order
+                            {loadingCheack ? (
+                              <Loading
+                                type="tail_spin"
+                                width={25}
+                                height={25}
+                                fill="#ffffff"
+                              />
+                            ) : (
+                              "Place Order"
+                            )}
                           </button>
                         ) : (
                           <button type="submit" className="btn-hover">
-                            Place Order
+                            {loadingCheack ? (
+                              <Loading
+                                type="tail_spin"
+                                width={25}
+                                height={25}
+                                fill="#ffffff"
+                              />
+                            ) : (
+                              "Place Order"
+                            )}
                           </button>
                         )}
                       </div>

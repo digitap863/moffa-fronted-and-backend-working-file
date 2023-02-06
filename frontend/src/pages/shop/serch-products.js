@@ -10,6 +10,7 @@ import Breadcrumb from "../../wrappers/breadcrumb/Breadcrumb";
 import ShopSidebar from "../../wrappers/product/ShopSidebar";
 import ShopTopbar from "../../wrappers/product/ShopTopbar";
 import ShopProducts from "../../wrappers/product/ShopProducts";
+import Loading from "react-loading-components";
 import rootReducer from "../../redux/reducers/rootReducer";
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
@@ -31,6 +32,7 @@ const ShopGridStandard = ({ location, product, user }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentData, setCurrentData] = useState([]);
   const [sortedProducts, setSortedProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const { addToast } = useToasts();
   const pageLimit = 15;
@@ -68,7 +70,7 @@ const ShopGridStandard = ({ location, product, user }) => {
         });
       }
     })();
-  }, []);
+  }, [product]);
   useEffect(() => {
     if (itemId) {
       let result = itemId.slice(0, 2);
@@ -108,6 +110,13 @@ const ShopGridStandard = ({ location, product, user }) => {
     setCurrentData(sortedProducts.slice(offset, offset + pageLimit));
   }, [offset, products, sortType, sortValue, filterSortType, filterSortValue]);
 
+  useEffect(() => {  
+    if (!products[0]) {
+      setLoading(true);
+    }else{
+      setLoading(false);
+    } 
+  }, [products]);
   return (
     <Fragment>
       <MetaTags>
@@ -149,11 +158,28 @@ const ShopGridStandard = ({ location, product, user }) => {
                 />
 
                 {/* shop page content default */}
-                <ShopProducts
-                  layout={layout}
-                  products={currentData}
-                  user={user}
-                />
+                {loading ? (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "7rem",
+                      marginTop: "7rem",
+                    }}
+                  >
+                    <Loading
+                      type="oval"
+                      width={80}
+                      height={80}
+                      fill="#f44242"
+                    />
+                  </div>
+                ) : (
+                  <ShopProducts
+                    layout={layout}
+                    products={currentData}
+                    user={user}
+                  />
+                )}
 
                 {/* shop product pagination */}
                 <div className="pro-pagination-style text-center mt-30">

@@ -13,7 +13,8 @@ module.exports={
     DEAL_OF_THE_DAY:'dealDay',
     BOTTOM_BANNER:'BottomBanner',
     WALLET_INFORMATION:'walletInfo',
-    CREATED_ORDER_RAZORPAY:'createdOrder'
+    CREATED_ORDER_RAZORPAY:'createdOrder',
+    ORDER_COUNTER_COLLECTION:"counter"
     // BANNER_COLLECTION:'banner',
     // COUPON_COLLECTION:'coupon'
 } 

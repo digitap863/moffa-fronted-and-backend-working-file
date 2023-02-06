@@ -888,6 +888,7 @@ const EditOrderAddress = asyncHandler(async (req, res) => {
 });
 const ImageUploading = asyncHandler(async (req, res) => {
   let images = [];
+  console.log(req.files);
   if (req.files.file && req.files.file.length > 0) {
     for (let i = 0; i < req.files.file.length; i++) {
       uploadS3(req.files.file[i].data)

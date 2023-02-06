@@ -35,6 +35,7 @@ const FooterOne = ({
   };
 
   return (
+    <>
     <footer
       className={`footer-area ${
         backgroundColorClass ? backgroundColorClass : ""
@@ -43,6 +44,7 @@ const FooterOne = ({
       } ${extraFooterClass ? extraFooterClass : ""} ${
         spaceLeftClass ? spaceLeftClass : ""
       } ${spaceRightClass ? spaceRightClass : ""}`}
+      style={{ paddingBottom: "0px" }}
     >
       <div className={`${containerClass ? containerClass : "container"}`}>
         <div className="row">
@@ -60,7 +62,7 @@ const FooterOne = ({
           <div
             className={`${
               sideMenu ? "col-xl-2 col-sm-4" : "col-lg-3 col-sm-4"
-            }`} 
+            }`}
           >
             <div className="footer-widget mb-30 ml-30 mt-4">
               <div className="footer-title">
@@ -189,20 +191,9 @@ const FooterOne = ({
               </div>
             </div>
           </div>
-          {/* <div
-            className={`${
-              sideMenu ? "col-xl-2 col-sm-8" : "col-lg-2 col-sm-6"
-            }`}
-          >
-       
-            <FooterNewsletter
-              spaceBottomClass="mb-30"
-              spaceLeftClass="ml-70"
-              sideMenu={sideMenu}
-            />
-          </div> */} 
         </div>
       </div>
+   
       <a href=" https://wa.me/+917994674284" target="_blank">
         <button
           className={`scroll-top ${scroll > top ? "show" : ""}`}
@@ -216,6 +207,12 @@ const FooterOne = ({
         </button>
       </a>
     </footer>
+       <div className="container pb-2 pt-2 pe-2" >
+       <div className="row text-end" style={{alignItems:"end",justifyContent:"end",marginRight:"2px"}}>
+         <p style={{fontSize:"16px",fontWeight:500}}>Developed by : <a href="https://tapclone.co.in/" target="_blank" className="ms-1" style={{textDecoration:"none",color:"orange"}}> Tapclone </a></p>
+       </div>
+     </div>
+     </>
   );
 };
 

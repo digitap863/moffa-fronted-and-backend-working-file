@@ -11,6 +11,7 @@ import ShopSidebar from "../../wrappers/product/ShopSidebar";
 import ShopTopbar from "../../wrappers/product/ShopTopbar";
 import ShopProducts from "../../wrappers/product/ShopProducts";
 import rootReducer from "../../redux/reducers/rootReducer";
+import Loading from "react-loading-components";
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { save, load } from "redux-localstorage-simple";
@@ -49,14 +50,16 @@ const ShopGridStandard = ({ location, product, user }) => {
           load(),
           composeWithDevTools(applyMiddleware(thunk, save()))
         );
+
         if (itemId == "new" || itemId == "best") {
           const result = getSortedProducts(data, itemId, true);
           setProducts(result);
         } else {
-          const result = getSortedProducts(product, "category", itemId);
-          setProducts(result);
-        }
-        store.dispatch(fetchProducts(data));
+          const result = getSortedProducts(data, "category", itemId);
+
+          setProducts(result); 
+        } 
+        store.dispatch(fetchProducts(data));  
       } catch (error) {
         addToast("Somthing Went Wrong", {
           appearance: "success",
@@ -64,7 +67,7 @@ const ShopGridStandard = ({ location, product, user }) => {
         });
       }
     })();
-  }, []);
+  }, [product]);
 
   useEffect(() => {
     if (itemId == "new" || itemId == "best") {
@@ -74,7 +77,7 @@ const ShopGridStandard = ({ location, product, user }) => {
       const result = getSortedProducts(product, "category", itemId);
       setProducts(result);
     }
-  }, []);
+  }, [product]);
   const getLayout = (layout) => {
     setLayout(layout);
   };
@@ -100,6 +103,13 @@ const ShopGridStandard = ({ location, product, user }) => {
     setCurrentData(sortedProducts.slice(offset, offset + pageLimit));
   }, [offset, products, sortType, sortValue, filterSortType, filterSortValue]);
 
+  useEffect(() => {
+    if (!products[0]) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [products]);
   return (
     <Fragment>
       <MetaTags>
@@ -141,11 +151,28 @@ const ShopGridStandard = ({ location, product, user }) => {
                 />
 
                 {/* shop page content default */}
-                <ShopProducts
-                  layout={layout}
-                  products={currentData}
-                  user={user}
-                />
+                {loading ? (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "7rem",
+                      marginTop: "7rem",
+                    }}
+                  >
+                    <Loading
+                      type="oval"
+                      width={80}
+                      height={80}
+                      fill="#f44242"
+                    />
+                  </div>
+                ) : (
+                  <ShopProducts
+                    layout={layout}
+                    products={currentData}
+                    user={user}
+                  />
+                )}
 
                 {/* shop product pagination */}
                 <div className="pro-pagination-style text-center mt-30">

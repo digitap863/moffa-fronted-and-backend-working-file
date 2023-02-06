@@ -11,7 +11,7 @@ const path = require("path");
 const { notFound, errorHandler } = require("./errormiddleware/errorMidlleware");
 const app = express();
 dotenv.config();
-app.use(fileupload());
+app.use(fileupload());   
 app.use(express.static("files"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-db.connect((err) => {
+db.connect((err) => { 
   if (err) {
     console.log("connection error" + err);
   } else {
