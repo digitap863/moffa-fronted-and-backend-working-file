@@ -392,12 +392,14 @@ const deleteWholesalers = asyncHandler((req, res) => {
 });
 const makeUser = asyncHandler(async (req, res) => {
   const Id = req.params.id;
+  console.log(Id);
   const deleteWholesalers = await db
     .get()
     .collection(collection.WHOLESALER_COLLECTION)
     .deleteOne({
       _id: objectId(Id),
     });
+  
   if (deleteWholesalers) {
     res.status(200).json("Success");
   } else {
@@ -455,12 +457,12 @@ const EditProducts = asyncHandler(async (req, res) => {
 //view singel ordre products
 const getSingleOrder = asyncHandler(async (req, res) => {
   const orderId = req.params.id;
-  const singlOrder = await db
+  const singleOrder = await db
     .get()
     .collection(collection.ORDER_COLLECTION)
-    .findOne({ Id: parseInt(orderId) });
-  if (singlOrder) {
-    res.status(200).json(singlOrder);
+    .findOne({ _id: objectId(orderId) });
+  if (singleOrder) {
+    res.status(200).json(singleOrder);
   } else {
     res.status(500).json("Somthing Went Wrong");
   }
@@ -698,7 +700,7 @@ const DispatchOrder = asyncHandler(async (req, res) => {
   const ChangeOrderStatus = await db
     .get()
     .collection(collection.ORDER_COLLECTION)
-    .updateOne({ Id: parseInt(ORDER_ID) }, { $set: { status: TrackingID } });
+    .updateOne({ _id: objectId(ORDER_ID) }, { $set: { status: TrackingID } });
   if (ChangeOrderStatus) {
     res.status(200).json("Success");
   } else {
