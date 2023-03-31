@@ -1759,10 +1759,10 @@ const createOrderObjct = asyncHandler(async (req, res) => {
     OrderId = OrdersId[0].Id + 1;
     const PR = OrdersId[0].InvoceNO.slice(5);
     const inc = parseInt(PR) + 1;
-    InvoceNO = "MFA00" + inc;
+    InvoceNO = "PA000" + inc;
   } else {
     OrderId = 130001;
-    InvoceNO = "MFA" + 001;
+    InvoceNO = "PA0" + 001;
   }
   //oder producting deatails storing array
   const OderProducts = [];
