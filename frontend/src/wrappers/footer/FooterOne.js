@@ -209,7 +209,7 @@ const FooterOne = ({
     </footer>
        <div className="container pb-2 pt-2 pe-2" >
        <div className="row text-end" style={{alignItems:"end",justifyContent:"end",marginRight:"2px"}}>
-         <p style={{fontSize:"16px",fontWeight:500}}>Developed by : <a href="https://tapclone.co.in/" target="_blank" className="ms-1" style={{textDecoration:"none",color:"orange"}}> Tapclone </a></p>
+         <p style={{fontSize:"16px",fontWeight:500,fontFamily:"FontAwesome"}}>Developed by : <a href="https://tapclone.co.in/" target="_blank" className="ms-1" style={{textDecoration:"none",color:"orange"}}> Tapclone </a></p>
        </div>
      </div>
      </>

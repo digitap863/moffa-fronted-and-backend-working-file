@@ -43,6 +43,7 @@ const {
   MonthlyWaysReportApi,
   EditOrderAddress,
   ImageUploading,
+  AddBannerImage
 } = require("../controllers/superAdminControllers");
 const multer = require("multer");
 let upload = multer({
@@ -141,10 +142,12 @@ router.route("/view-all-wallet-info").get(verifyToken, ViewAllInformation);
 //monthly ways report downloading api
 router
   .route("/view-all-monthlyways-report")
-  .post(verifyToken, MonthlyWaysReportApi);
+  .post(verifyToken, MonthlyWaysReportApi); 
 //order editing
 router.route("/edit-order-address").post(verifyToken, EditOrderAddress);
 //image uploading
 router.route("/image-uploading").post( ImageUploading);
+router.route("/upload-banner-image").post( AddBannerImage);
 
+ 
 module.exports = router;

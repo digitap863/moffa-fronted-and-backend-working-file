@@ -541,10 +541,10 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
                           config
                         );
                         setLoadingCheack(false);
-                        const { ammount, id: order_id, currency } = data;
+                        const { amount, id: order_id, currency } = data;
                         const options = {
                           key: process.env.SECRET_KEY, // Enter the Key ID generated from the Dashboard
-                          amount: ammount,
+                          amount: amount,
                           currency: currency,
                           name: "MOFFA CLOTHING.",
                           description: "LIVE Transaction",
@@ -798,10 +798,10 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
                               config
                             );
                             setLoadingCheack(false);
-                            const { ammount, id: order_id, currency } = data;
+                            const { amount, id: order_id, currency } = data;
                             const options = {
                               key: process.env.SECRET_KEY, // Enter the Key ID generated from the Dashboard
-                              amount: ammount,
+                              amount: amount,
                               currency: currency,
                               name: "MOFFA CLOTHING.",
                               description: "Transaction",
@@ -965,8 +965,8 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
           };
           const { data } = await axios.post(
             "/api/user/delete-user-addres",
-            { userId },
-            config
+            { userId }, 
+            config  
           );
 
           setLoading(true);
