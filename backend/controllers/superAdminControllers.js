@@ -775,6 +775,7 @@ const MonthlyWaysReportApi = asyncHandler(async (req, res) => {
                     Total: 1,
                     dateIso: 1,
                     wallet: 1,
+                    Product:1,
                     DeliveyCharge: 1,
                     "Address.State": 1,
                 },

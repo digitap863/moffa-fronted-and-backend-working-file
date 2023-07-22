@@ -6,7 +6,7 @@ const {
 } = require("../controllers/superAdminControllers");
 const router = express.Router();
 const {
-  registerUser,
+  registerUser,  
   Phoneverification,
   loginUser,
   VerifyPhone,

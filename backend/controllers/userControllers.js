@@ -1625,10 +1625,10 @@ const createOrderObjct = asyncHandler(async (req, res) => {
         OrderId = OrdersId[0].Id + 1;
         const PR = OrdersId[0].InvoceNO.slice(5);
         const inc = parseInt(PR) + 1;
-        InvoceNO = "PA000" + inc;
+        InvoceNO = "MFA00" + inc;
     } else {
         OrderId = 130001;
-        InvoceNO = "PA0" + 001;
+        InvoceNO = "MFA" + 001;
     }
     //oder producting deatails storing array
     const OderProducts = [];
@@ -1975,7 +1975,7 @@ const verificationPayment = asyncHandler(async (req, res) => {
                 if (!LastOrderId) {
                     const obj = {
                         ID: 1343,
-                        InvoceNO: "PA001",
+                        InvoceNO: "MFA001",
                         name: "counter",
                     };
                     await db.get().collection(collection.ORDER_COUNTER_COLLECTION).insertOne(obj);
@@ -1985,7 +1985,7 @@ const verificationPayment = asyncHandler(async (req, res) => {
                     OrderId = LastOrderId.ID;
                     const PR = LastOrderId.InvoceNO.slice(5);
                     const inc = parseInt(PR) + 1;
-                    InvoceNO = "PA000" + inc;
+                    InvoceNO = "MFA00" + inc;
                     await db
                         .get()
                         .collection(collection.ORDER_COUNTER_COLLECTION)
@@ -2169,7 +2169,7 @@ const rezorpayOrder = asyncHandler(async (req, res) => {
     if (!LastOrderId) {
         const obj = {
             ID: 1343,
-            InvoceNO: "PA0001",
+            InvoceNO: "MFA001",
             name: "counter",
         };
         await db.get().collection(collection.ORDER_COUNTER_COLLECTION).insertOne(obj);
@@ -2179,7 +2179,7 @@ const rezorpayOrder = asyncHandler(async (req, res) => {
         OrderId = LastOrderId.ID;
         const PR = LastOrderId.InvoceNO.slice(5);
         const inc = parseInt(PR) + 1;
-        InvoceNO = "PA000" + inc;
+        InvoceNO = "MFA00" + inc;
         await db
             .get()
             .collection(collection.ORDER_COUNTER_COLLECTION)

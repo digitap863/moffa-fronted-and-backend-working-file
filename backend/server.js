@@ -25,7 +25,7 @@ app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
 
 app.use("/api/user", userRoutes);
 app.use("/api/superAdmin", superAdmin);
-
+ 
 //  ------------------deployment-----------------------
 __dirname = path.resolve();
 if (process.env.NODE_ENV === "production") {
@@ -47,7 +47,6 @@ app.listen(PORT, console.log(`server started on PORT ${PORT}`));
 @developer 
 name :ASIF SAHEER K
 link_Id :Asif Saheer k
-contact_no : 7034515384
 email:asifsaheer7034@gmail.com
 company:TAPCLONE 
-*/
+*/   
