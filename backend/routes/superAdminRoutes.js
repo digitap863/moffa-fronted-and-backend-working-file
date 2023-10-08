@@ -43,7 +43,9 @@ const {
   MonthlyWaysReportApi,
   EditOrderAddress,
   ImageUploading,
-  AddBannerImage
+  AddBannerImage,
+  ManuallyOrder,
+  UniqueOrderTake
 } = require("../controllers/superAdminControllers");
 const multer = require("multer");
 let upload = multer({
@@ -148,6 +150,8 @@ router.route("/edit-order-address").post(verifyToken, EditOrderAddress);
 //image uploading
 router.route("/image-uploading").post( ImageUploading);
 router.route("/upload-banner-image").post( AddBannerImage);
+router.route("/check-order-details").post( verifyToken,UniqueOrderTake);
+router.route("/order-confirm-admin").post( verifyToken,ManuallyOrder);
 
  
 module.exports = router;

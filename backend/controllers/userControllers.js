@@ -1628,7 +1628,7 @@ const createOrderObjct = asyncHandler(async (req, res) => {
         InvoceNO = "MFA00" + inc;
     } else {
         OrderId = 130001;
-        InvoceNO = "MFA" + 001;
+        InvoceNO = "MFA" + "001";
     }
     //oder producting deatails storing array
     const OderProducts = [];
@@ -1772,6 +1772,14 @@ const verificationPayment = asyncHandler(async (req, res) => {
             .get()
             .collection(collection.CREATED_ORDER_RAZORPAY)
             .findOne({ razorpay_order_Id: order_id });
+        let uniqueOrder = { ...takeorderObject };
+        const getUniqueOrder = await db
+            .get()
+            .collection(collection.ORDER_UNIQUE_COLLECTION)
+            .findOne({ razorpay_order_Id: order_id });
+        if (!getUniqueOrder && uniqueOrder.razorpay_order_Id) {
+            await db.get().collection(collection.ORDER_UNIQUE_COLLECTION).insertOne(uniqueOrder);
+        }
         if (takeorderObject) {
             if (takeorderObject?.addWallet) {
                 await db.get().collection(collection.CREATED_ORDER_RAZORPAY).deleteOne({ razorpay_order_Id: order_id });
@@ -1809,7 +1817,6 @@ const verificationPayment = asyncHandler(async (req, res) => {
                     res.status(500).json("Somthing Went wrong");
                 }
             } else {
-                await db.get().collection(collection.CREATED_ORDER_RAZORPAY).deleteOne({ razorpay_order_Id: order_id });
                 let order;
                 let ID;
                 let User;
@@ -2007,13 +2014,13 @@ const verificationPayment = asyncHandler(async (req, res) => {
 
                 const success = await db.get().collection(collection.ORDER_COLLECTION).insertOne(order);
                 if (success) {
-                    console.log("succeess");
+                    await db.get().collection(collection.CREATED_ORDER_RAZORPAY).deleteOne({ razorpay_order_Id: order_id });
                     if (smsphone) {
                         sms.sendOrderPlacedSMS(OrderId, smsphone);
                     }
-                    if (sendEmail) {
-                        email.sendOrderPlacedMail(sendEmail);
-                    }
+                    // if (sendEmail) {
+                    //     email.sendOrderPlacedMail(sendEmail);
+                    // }
                     req.session.orderProducts = null;
                     req.session.Applywallet = null;
                     res.status(200).json("Success");
@@ -2023,7 +2030,7 @@ const verificationPayment = asyncHandler(async (req, res) => {
             }
         }
     } catch (error) {
-        res.status(400).json("Somthing Went Wrong");
+        // res.status(400).json("Somthing Went Wrong");
     }
 });
 

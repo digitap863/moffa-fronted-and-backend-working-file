@@ -14,7 +14,8 @@ module.exports={
     BOTTOM_BANNER:'BottomBanner',
     WALLET_INFORMATION:'walletInfo',
     CREATED_ORDER_RAZORPAY:'createdOrder',
-    ORDER_COUNTER_COLLECTION:"counter"
+    ORDER_COUNTER_COLLECTION:"counter",
+    ORDER_UNIQUE_COLLECTION:"unique"
     // BANNER_COLLECTION:'banner',
     // COUPON_COLLECTION:'coupon'
 } 
