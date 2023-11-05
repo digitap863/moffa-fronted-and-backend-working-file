@@ -215,13 +215,14 @@ const Checkout = ({ location, cartItems, currency, user, deleteFromCart }) => {
       }
     } else {
       if (toatalQuantity == 1) {
-        setDeliveryCharges(50);
-      } else if (toatalQuantity == 2) {
-        setDeliveryCharges(70);
-      } else if (toatalQuantity == 3) {
-        setDeliveryCharges(90);
-      } else {
-        setDeliveryCharges(100);
+        setDeliveryCharges(60);
+      // } else if (toatalQuantity == 2) {
+      //   setDeliveryCharges(80);
+      // } else if (toatalQuantity == 3) {
+      //   setDeliveryCharges(100);
+       } else {
+        let IndianPostTotal=parseInt(toatalQuantity)*20
+        setDeliveryCharges(60+IndianPostTotal);
       }
     }
   }, [toatalQuantity, state, cartItems, courier]);
